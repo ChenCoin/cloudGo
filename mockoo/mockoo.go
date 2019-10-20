@@ -8,11 +8,27 @@ import (
 )
 
 var configPath = "./mockoo.json"
+var defaultTextPath = "./textRouter.json"
+var defaultFilePath = "./fileRouter.json"
 
 var defaultConfig = `{
   "port": ":8090",
-  "textRoute": [],
-  "fileRoute": []
+  "textRoute": "./textRouter.json",
+  "fileRoute": "./fileRouter.json"
+}`
+
+var defaultTextRouter = `{
+  "router": [
+    {
+      "key": "/getMoney",
+      "value": "120$"
+    }
+  ]
+}`
+var defaultFileRouter = `{
+  "port": ":8090",
+  "textRoute": "./textRouter.json",
+  "fileRoute": "./fileRouter.json"
 }`
 
 type MockConfig struct {
@@ -45,6 +61,8 @@ func writeConfig() {
 	if err != nil {
 		Printf("config.json created error, %s", err.Error())
 	} else {
+		_ = WriteFile(defaultTextPath, []byte(defaultTextRouter), 0644)
+		_ = WriteFile(defaultFilePath, []byte(defaultFileRouter), 0644)
 		Printf("config.json had be created, please check and restart server.")
 	}
 }

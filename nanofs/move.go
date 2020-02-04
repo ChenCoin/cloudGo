@@ -24,7 +24,7 @@ func move(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = os.Rename("."+srcPath, "."+dstPath)
+	err = os.Rename(root+srcPath, root+dstPath)
 	if err != nil {
 		http.Error(w, "500", http.StatusInternalServerError)
 		log.Printf("move %s %s: %s", srcPath, dstPath, err.Error())

@@ -13,8 +13,8 @@ func check(filePath string) bool {
 	if filePath == "/" {
 		return true
 	}
-	path1, err := filepath.Abs("." + filePath)
-	path2, err := filepath.Abs(".")
+	path1, err := filepath.Abs(root + filePath)
+	path2, err := filepath.Abs(root)
 	path3 := filepath.Clean(filePath)
 	if err != nil {
 		return false

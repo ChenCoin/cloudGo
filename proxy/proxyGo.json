@@ -1,7 +1,12 @@
 {
   "initial": false,
-  "address": ":443",
+  "port": 443,
   "crt": "server.crt",
   "key": "server.key",
-  "parse": "http://localhost:80"
+  "list": [
+    {
+      "host": "localhost",
+      "parse": "http://localhost:8090"
+    }
+  ]
 }

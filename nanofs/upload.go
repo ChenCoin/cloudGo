@@ -74,7 +74,7 @@ func _saveFile(w http.ResponseWriter, fileHeader *multipart.FileHeader, path str
 		return err
 	}
 	defer file.Close()
-	dst, err := os.Create("." + path + "/" + fileHeader.Filename)
+	dst, err := os.Create(root + path + "/" + fileHeader.Filename)
 	if err != nil {
 		return err
 	}

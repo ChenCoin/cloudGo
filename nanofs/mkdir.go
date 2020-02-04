@@ -13,7 +13,7 @@ func mkdir(w http.ResponseWriter, r *http.Request) {
 		log.Printf("mkdir %s: path error", path)
 		return
 	}
-	err := os.Mkdir("."+path, os.ModePerm)
+	err := os.Mkdir(root+path, os.ModePerm)
 	if err != nil {
 		http.Error(w, "500", http.StatusInternalServerError)
 		log.Printf("mkdir %s: %s", path, err.Error())

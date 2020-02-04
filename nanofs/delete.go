@@ -14,7 +14,7 @@ func deleteFile(w http.ResponseWriter, r *http.Request) {
 		log.Printf("delete %s: path error", path)
 		return
 	}
-	err := os.RemoveAll("." + path)
+	err := os.RemoveAll(root + path)
 	if err != nil {
 		http.Error(w, "500", http.StatusInternalServerError)
 		log.Printf("delete %s: %s", path, err.Error())

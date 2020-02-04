@@ -26,7 +26,7 @@ func list(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	path = "." + path
+	path = root + path
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {

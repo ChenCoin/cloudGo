@@ -7,24 +7,30 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strconv"
 )
 
-type ParseConfig struct {
+type site struct {
+	Host  string `json:"host"`
+	Parse string `json:"parse"`
+}
+
+type parseConfig struct {
 	Initial bool   `json:"initial"`
-	Address string `json:"address"`
+	Port    int    `json:"port"`
 	Crt     string `json:"crt"`
 	Key     string `json:"key"`
-	Parse   string `json:"parse"`
+	List    []site `json:"list"`
 }
 
 var configPath = "./proxyGo.json"
 
-func readConfig() (ParseConfig, error) {
+func readConfig() (parseConfig, error) {
 	data, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		return ParseConfig{}, err
+		return parseConfig{}, err
 	}
-	conf := ParseConfig{}
+	conf := parseConfig{}
 	err = json.Unmarshal(data, &conf)
 	return conf, err
 }
@@ -42,14 +48,32 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		uri, err := url.Parse(conf.Parse)
-		if err != nil {
-			return
+		match := false
+		for i := 0; i < len(conf.List); i++ {
+			site := conf.List[i]
+			log.Print("yes " + site.Host)
+			if r.Host == site.Host {
+				log.Print("yes ")
+				uri, err := url.Parse(site.Parse)
+				if err != nil {
+					return
+				}
+				httputil.NewSingleHostReverseProxy(uri).ServeHTTP(w, r)
+				match = true
+				break
+			}
 		}
-		httputil.NewSingleHostReverseProxy(uri).ServeHTTP(w, r)
+		if !match {
+			w.WriteHeader(http.StatusNotFound)
+		}
 	})
 	log.Print("server start")
-	err = http.ListenAndServeTLS(conf.Address, conf.Crt, conf.Key, nil)
+
+	if conf.Crt != "" {
+		err = http.ListenAndServeTLS(":"+strconv.Itoa(conf.Port), conf.Crt, conf.Key, nil)
+	} else {
+		err = http.ListenAndServe(":"+strconv.Itoa(conf.Port), nil)
+	}
 	if err != nil {
 		log.Print("server error: " + err.Error())
 		return

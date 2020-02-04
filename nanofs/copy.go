@@ -26,8 +26,8 @@ func copyFiles(w http.ResponseWriter, r *http.Request) {
 		log.Printf("copy %s to %s: path error", srcPath, dstPath)
 		return
 	}
-	srcPath = "." + srcPath
-	dstPath = "." + dstPath
+	srcPath = root + srcPath
+	dstPath = root + dstPath
 
 	f, err := os.Stat(srcPath)
 	if err != nil {

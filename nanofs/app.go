@@ -1,23 +1,57 @@
 package main
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 )
 
+type NanofsConfig struct {
+	Initial bool   `json:"initial"`
+	Port    int    `json:"port"`
+	Dir     string `json:"dir"`
+}
+
+var configPath = "./nanofs.json"
+
+var root = "."
+
+func readConfig() (NanofsConfig, error) {
+	data, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		return NanofsConfig{}, err
+	}
+	conf := NanofsConfig{}
+	err = json.Unmarshal(data, &conf)
+	return conf, err
+}
+
 func main() {
+	conf, err := readConfig()
+	if err != nil {
+		log.Print(err.Error())
+		return
+	}
+
+	if conf.Initial == false {
+		log.Print("please initial the configure file, and set \"initial\":true")
+		return
+	}
+
+	root = conf.Dir
 	handlerFunc("/list/", "/list", list)
-	handlerFile("/download/", "/download", "./")
-	http.HandleFunc("/put/file/", uploadFile)
+	handlerFile("/download/", "/download", root+"/")
 	handlerFunc("/upload/", "/upload", uploadFile)
 	handlerFunc("/copy/", "/copy", copyFiles)
 	handlerFunc("/move/", "/move", move)
 	handlerFunc("/delete/", "/delete", deleteFile)
 	handlerFunc("/rename/", "/rename", rename)
 	handlerFunc("/mkdir/", "/mkdir", mkdir)
-	handlerFile("/", "", "./")
+	handlerFile("/", "", root+"/")
 	log.Printf("server running")
-	err := http.ListenAndServe(":8090", nil)
+	err = http.ListenAndServe(":"+strconv.Itoa(conf.Port), nil)
 	if err != nil {
 		log.Printf("error when create server")
 	}

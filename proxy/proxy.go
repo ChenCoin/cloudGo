@@ -10,18 +10,12 @@ import (
 )
 
 type ParseConfig struct {
-	Address string `json:"address"`;
-	Crt     string `json:"crt"`;
-	Key     string `json:"key"`;
+	Initial bool   `json:"initial"`
+	Address string `json:"address"`
+	Crt     string `json:"crt"`
+	Key     string `json:"key"`
 	Parse   string `json:"parse"`
 }
-
-var defaultConfig = `{
-	"address": ":443",
-	"crt": "server.crt",
-	"key": "server.key",
-	"parse": "http://localhost:80"
-}`
 
 var configPath = "./proxyGo.json"
 
@@ -35,19 +29,15 @@ func readConfig() (ParseConfig, error) {
 	return conf, err
 }
 
-func writeConfig() {
-	err := ioutil.WriteFile(configPath, []byte(defaultConfig), 0644)
-	if err != nil {
-		log.Printf("config.json created error, %s", err.Error())
-	} else {
-		log.Printf("config.json had be created, please check and restart server.")
-	}
-}
-
 func main() {
 	conf, err := readConfig()
 	if err != nil {
-		writeConfig()
+		log.Print(err.Error())
+		return
+	}
+
+	if conf.Initial == false {
+		log.Print("please initial the configure file, and set \"initial\":true")
 		return
 	}
 

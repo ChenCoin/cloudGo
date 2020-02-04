@@ -10,14 +10,10 @@ import (
 )
 
 type WebdavConfig struct {
-	Port int    `json:"port"`;
-	Dir  string `json:"dir"`
+	Initial bool   `json:"initial"`
+	Port    int    `json:"port"`
+	Dir     string `json:"dir"`
 }
-
-var defaultConfig = `{
-	"port": 80,
-	"dir": "."
-}`
 
 var configPath = "./webdav.json"
 
@@ -31,19 +27,15 @@ func readConfig() (WebdavConfig, error) {
 	return conf, err
 }
 
-func writeConfig() {
-	err := ioutil.WriteFile(configPath, []byte(defaultConfig), 0644)
-	if err != nil {
-		log.Printf("config.json created error, %s", err.Error())
-	} else {
-		log.Printf("config.json had be created, please check and restart server.")
-	}
-}
-
 func main() {
 	conf, err := readConfig()
 	if err != nil {
-		writeConfig()
+		log.Print(err.Error())
+		return
+	}
+
+	if conf.Initial == false {
+		log.Print("please initial the configure file, and set \"initial\":true")
 		return
 	}
 

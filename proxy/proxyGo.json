@@ -1,0 +1,7 @@
+{
+  "initial": false,
+  "address": ":443",
+  "crt": "server.crt",
+  "key": "server.key",
+  "parse": "http://localhost:80"
+}

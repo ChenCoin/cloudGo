@@ -1,6 +1,7 @@
 {
   "initial": false,
   "port": 443,
+  "comment": "if you server is only http, please remove the key-value of crt and key",
   "crt": "server.crt",
   "key": "server.key",
   "list": [

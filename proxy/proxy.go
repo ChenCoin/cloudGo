@@ -51,9 +51,7 @@ func main() {
 		match := false
 		for i := 0; i < len(conf.List); i++ {
 			site := conf.List[i]
-			log.Print("yes " + site.Host)
 			if r.Host == site.Host {
-				log.Print("yes ")
 				uri, err := url.Parse(site.Parse)
 				if err != nil {
 					return

@@ -39,7 +39,7 @@ func main() {
 	}
 
 	http.Handle("/", http.FileServer(http.Dir(conf.Dir)))
-	log.Printf("server running on " + strconv.Itoa(conf.Port))
+	log.Printf("server running on port " + strconv.Itoa(conf.Port))
 	err = http.ListenAndServe(":"+strconv.Itoa(conf.Port), nil)
 	if err != nil {
 		log.Printf("error when create server")

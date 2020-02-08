@@ -14,7 +14,7 @@ type NanofsConfig struct {
 	Dir     string `json:"dir"`
 }
 
-var configPath = "./nanofs.json"
+var configPath = "./config.json"
 
 var root = "."
 

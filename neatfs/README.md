@@ -1,7 +1,7 @@
-# nanofs
-a file api server create by golang, used to manage file on web server.
+# neatfs
+a file server create by golang, used to manage file on web server.
 
-It is nano, lite, beta, or with bugs. 
+It is nano, lite, beta, and even with bugs. 
 
 What's feature here?
  - list files
@@ -18,5 +18,5 @@ How to use it?
  - unzip the zip file
  - edit the config.json
  - change the value of initial from false to true, and change the port and root dir if need
- - finally, run nanofs "./nanofs" or "./nanofs.exe" on windows
- - maybe "nohup ./nanofs > log &" is better
+ - finally, run neatfs with "./neatfs" or "./neatfs.exe" on windows
+ - maybe "nohup ./neatfs > log &" is better

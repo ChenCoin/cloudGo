@@ -50,7 +50,7 @@ func main() {
 	handlerFunc("/rename/", "/rename", rename)
 	handlerFunc("/mkdir/", "/mkdir", mkdir)
 	handlerFile("/", "", root+"/")
-	log.Printf("server running")
+	log.Printf("server running on port " + strconv.Itoa(conf.Port))
 	err = http.ListenAndServe(":"+strconv.Itoa(conf.Port), nil)
 	if err != nil {
 		log.Printf("error when create server")

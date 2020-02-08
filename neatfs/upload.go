@@ -51,10 +51,10 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	files := r.MultipartForm.File["files"]
 	result := true
 	fileNames := ""
-	for i, _ := range files {
+	for i := range files {
 		file := files[i]
 		fileNames += " " + file.Filename
-		err = _saveFile(w, file, path)
+		err = _saveFile(file, path)
 		if err != nil {
 			result = false
 			http.Error(w, "404", http.StatusNotFound)
@@ -68,7 +68,7 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func _saveFile(w http.ResponseWriter, fileHeader *multipart.FileHeader, path string) error {
+func _saveFile(fileHeader *multipart.FileHeader, path string) error {
 	file, err := fileHeader.Open()
 	if err != nil {
 		return err

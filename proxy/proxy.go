@@ -23,7 +23,7 @@ type parseConfig struct {
 	List    []site `json:"list"`
 }
 
-var configPath = "./proxyGo.json"
+var configPath = "./config.json"
 
 func readConfig() (parseConfig, error) {
 	data, err := ioutil.ReadFile(configPath)
@@ -65,8 +65,8 @@ func main() {
 			w.WriteHeader(http.StatusNotFound)
 		}
 	})
-	log.Print("server start")
 
+	log.Printf("server running on port " + strconv.Itoa(conf.Port))
 	if conf.Crt != "" {
 		err = http.ListenAndServeTLS(":"+strconv.Itoa(conf.Port), conf.Crt, conf.Key, nil)
 	} else {

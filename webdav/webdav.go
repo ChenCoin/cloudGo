@@ -15,7 +15,7 @@ type WebdavConfig struct {
 	Dir     string `json:"dir"`
 }
 
-var configPath = "./webdav.json"
+var configPath = "./config.json"
 
 func readConfig() (WebdavConfig, error) {
 	data, err := ioutil.ReadFile(configPath)
@@ -39,7 +39,7 @@ func main() {
 		return
 	}
 
-	log.Print("server start")
+	log.Printf("server running on port " + strconv.Itoa(conf.Port))
 	err = http.ListenAndServe(":"+strconv.Itoa(conf.Port), &webdav.Handler{
 		FileSystem: webdav.Dir(conf.Dir),
 		LockSystem: webdav.NewMemLS(),

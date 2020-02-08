@@ -1,5 +1,5 @@
 {
-  "initial": true,
+  "initial": false,
   "port": 8090,
   "dir": "."
 }

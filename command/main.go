@@ -49,7 +49,7 @@ func main() {
 		match := false
 		for i := 0; i < len(conf.List); i++ {
 			item := conf.List[i]
-			if r.RequestURI == item.Path {
+			if r.RequestURI == "/"+item.Path {
 				cmd := exec.Command(conf.Bash, "-c", item.Command)
 				bytes, err := cmd.Output()
 				if err != nil {
@@ -62,7 +62,6 @@ func main() {
 			}
 		}
 		if !match {
-			w.WriteHeader(http.StatusNotFound)
 			http.Error(w, "404", http.StatusNotFound)
 		}
 	})

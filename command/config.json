@@ -2,6 +2,7 @@
   "initial": false,
   "port": 80,
   "bash": "/bin/bash",
+  "comment": "the bash in windows is 'PowerShell' or 'CMD', in linux is '/bin/bash'.",
   "list": [
     {
       "path": "echo",

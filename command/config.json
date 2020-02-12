@@ -1,0 +1,11 @@
+{
+  "initial": false,
+  "port": 80,
+  "bash": "/bin/bash",
+  "list": [
+    {
+      "path": "echo",
+      "command": "echo hello"
+    }
+  ]
+}

@@ -7,6 +7,10 @@
     {
       "path": "echo",
       "command": "echo hello"
+    },
+    {
+      "path": "temp",
+      "command": "cat /sys/class/thermal/thermal_zone0/temp"
     }
   ]
 }

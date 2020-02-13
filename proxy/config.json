@@ -7,7 +7,14 @@
   "list": [
     {
       "host": "localhost",
-      "parse": "http://localhost:8090"
+      "proxy": "http://localhost:8090",
+      "list": [
+        {
+          "prefix": "",
+          "rewrite": "",
+          "proxy": ""
+        }
+      ]
     }
   ]
 }

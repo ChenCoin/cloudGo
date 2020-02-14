@@ -1,0 +1,16 @@
+{
+  "initial": false,
+  "port": 8090,
+  "direct": [
+    {
+      "path": "/money",
+      "result": "\"now\":\"100\""
+    }
+  ],
+  "file": [
+    {
+      "path": "/fs",
+      "result": "/config.json"
+    }
+  ]
+}

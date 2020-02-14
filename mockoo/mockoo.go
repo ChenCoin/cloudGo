@@ -5,133 +5,77 @@ import (
 	. "io/ioutil"
 	. "log"
 	"net/http"
+	"strconv"
 )
 
-var configPath = "./mockoo.json"
-var defaultTextPath = "./textRouter.json"
-var defaultFilePath = "./fileRouter.json"
+var configPath = "./config.json"
 
-var defaultConfig = `{
-  "port": ":8090",
-  "textRoute": "./textRouter.json",
-  "fileRoute": "./fileRouter.json"
-}`
-
-var defaultTextRouter = `{
-  "router": [
-    {
-      "key": "/getMoney",
-      "value": "120$"
-    }
-  ]
-}`
-var defaultFileRouter = `{
-  "port": ":8090",
-  "textRoute": "./textRouter.json",
-  "fileRoute": "./fileRouter.json"
-}`
-
-type MockConfig struct {
-	Port       string `json:"port"`
-	TextRouter string `json:"textRoute"`
-	FileRouter string `json:"fileRoute"`
+type Pair struct {
+	Path   string `json:"path"`
+	Result string `json:"result"`
 }
 
-type Router struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+type Config struct {
+	Initial bool   `json:"initial"`
+	Port    int    `json:"port"`
+	Direct  []Pair `json:"direct"`
+	File    []Pair `json:"file"`
 }
 
-type RouterList struct {
-	Router []Router `json:"router"`
-}
-
-func readConfig() (MockConfig, error) {
+func readConfig() (Config, error) {
 	data, err := ReadFile(configPath)
-	if err != nil {
-		return MockConfig{}, err
+	conf := Config{}
+	if err == nil {
+		err = json.Unmarshal(data, &conf)
 	}
-	conf := MockConfig{}
-	err = json.Unmarshal(data, &conf)
-	return conf, err
-}
-
-func writeConfig() {
-	err := WriteFile(configPath, []byte(defaultConfig), 0644)
-	if err != nil {
-		Printf("config.json created error, %s", err.Error())
-	} else {
-		_ = WriteFile(defaultTextPath, []byte(defaultTextRouter), 0644)
-		_ = WriteFile(defaultFilePath, []byte(defaultFileRouter), 0644)
-		Printf("config.json had be created, please check and restart server.")
-	}
-}
-
-func readRouter(path string) (RouterList, error) {
-	data, err := ReadFile(path)
-	if err != nil {
-		return RouterList{}, err
-	}
-	conf := RouterList{}
-	err = json.Unmarshal(data, &conf)
 	return conf, err
 }
 
 func main() {
 	conf, err := readConfig()
 	if err != nil {
-		writeConfig()
+		Print(err.Error())
 		return
 	}
 
-	routeHandler := func(w http.ResponseWriter, r *http.Request) {
-		Printf(r.URL.Path)
-		var found = false
-		fileRouter, err := readRouter(conf.FileRouter)
-		if err == nil {
-			for _, v := range fileRouter.Router {
-				Printf(v.Key)
-				if v.Key == r.URL.Path {
-					data, err := ReadFile("." + v.Value)
-					if err == nil {
-						_, _ = w.Write(data)
-					} else {
-						http.Error(w, "404", http.StatusNotFound)
-					}
-					found = true
-					break
-				}
-			}
-		}
-
-		textRouter, err := readRouter(conf.TextRouter)
-		if err == nil {
-			Printf("not nil %d", len(textRouter.Router))
-			for _, v := range textRouter.Router {
-				Printf(v.Key)
-				if v.Key == r.URL.Path {
-					_, err = w.Write([]byte(v.Value))
-					if err == nil {
-						found = true
-						break
-					}
-				}
-			}
-		} else {
-			Printf("%s", err.Error())
-		}
-
-		if !found {
-			http.Error(w, "400", http.StatusBadRequest)
-		}
+	if conf.Initial == false {
+		Print("please initial the configure file, and set \"initial\":true")
+		return
 	}
 
-	Println("server start")
-	http.HandleFunc("/", routeHandler)
-	err = http.ListenAndServe(conf.Port, nil)
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		for _, pair := range conf.Direct {
+			if r.RequestURI == pair.Path {
+				_, err = w.Write([]byte(pair.Result))
+				if err != nil {
+					http.Error(w, "500", http.StatusInternalServerError)
+				}
+				return
+			}
+		}
+
+		for _, pair := range conf.File {
+			if r.RequestURI == pair.Path {
+				data, err := ReadFile("." + pair.Result)
+				if err == nil {
+					_, err = w.Write(data)
+					if err != nil {
+						http.Error(w, "500", http.StatusInternalServerError)
+					}
+					return
+				}
+				http.Error(w, "500", http.StatusInternalServerError)
+				return
+			}
+		}
+		http.Error(w, "404", http.StatusNotFound)
+	}
+
+	Printf("server running on port " + strconv.Itoa(conf.Port))
+	http.HandleFunc("/", handler)
+	err = http.ListenAndServe(":"+strconv.Itoa(conf.Port), nil)
 	if err != nil {
 		Print("server error: " + err.Error())
 	}
-
 	Println("server closed")
 }

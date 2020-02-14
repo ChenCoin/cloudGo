@@ -55,8 +55,7 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		match := false
-		for i := 0; i < len(conf.List); i++ {
-			site := conf.List[i]
+		for _, site := range conf.List {
 			match = reverseProxy(site, w, r)
 			if match {
 				break

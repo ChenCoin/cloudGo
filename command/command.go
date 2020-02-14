@@ -46,8 +46,7 @@ func main() {
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		match := false
-		for i := 0; i < len(conf.List); i++ {
-			item := conf.List[i]
+		for _, item := range conf.List {
 			if r.RequestURI == "/"+item.Path {
 				cmd := exec.Command(conf.Bash, "-c", item.Command)
 				bytes, err := cmd.Output()

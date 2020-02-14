@@ -4,9 +4,10 @@
   "direct": [
     {
       "path": "/money",
-      "result": "\"now\":\"100\""
+      "result": "{\"now\":\"100\"}"
     }
   ],
+  "dir": ["/ant"],
   "file": [
     {
       "path": "/fs",

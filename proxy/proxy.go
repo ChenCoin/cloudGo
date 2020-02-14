@@ -10,27 +10,34 @@ import (
 	"strconv"
 )
 
-type site struct {
-	Host  string `json:"host"`
-	Parse string `json:"parse"`
+type Rewrite struct {
+	From string `json:"from"`
+	To   string `json:"to"`
 }
 
-type parseConfig struct {
+type Site struct {
+	Host    string  `json:"host"`
+	Prefix  string  `json:"Prefix"`
+	Proxy   string  `json:"proxy"`
+	Rewrite Rewrite `json:"rewrite"`
+}
+
+type Config struct {
 	Initial bool   `json:"initial"`
 	Port    int    `json:"port"`
 	Crt     string `json:"crt"`
 	Key     string `json:"key"`
-	List    []site `json:"list"`
+	List    []Site `json:"list"`
 }
 
 var configPath = "./config.json"
 
-func readConfig() (parseConfig, error) {
+func readConfig() (Config, error) {
 	data, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		return parseConfig{}, err
+		return Config{}, err
 	}
-	conf := parseConfig{}
+	conf := Config{}
 	err = json.Unmarshal(data, &conf)
 	return conf, err
 }
@@ -51,18 +58,14 @@ func main() {
 		match := false
 		for i := 0; i < len(conf.List); i++ {
 			site := conf.List[i]
-			if r.Host == site.Host {
-				uri, err := url.Parse(site.Parse)
-				if err != nil {
-					return
-				}
-				httputil.NewSingleHostReverseProxy(uri).ServeHTTP(w, r)
-				match = true
+			match = reverseProxy(site, w, r)
+			if match {
 				break
 			}
 		}
 		if !match {
-			w.WriteHeader(http.StatusNotFound)
+			log.Println("no")
+			http.Error(w, "404", http.StatusNotFound)
 		}
 	})
 
@@ -77,4 +80,30 @@ func main() {
 		return
 	}
 	log.Print("server closed")
+}
+
+func reverseProxy(site Site, w http.ResponseWriter, r *http.Request) bool {
+	if site.Host != r.Host {
+		return false
+	}
+	requestURI := r.RequestURI
+	if len(requestURI) >= len(site.Prefix) && requestURI[0:len(site.Prefix)] == site.Prefix {
+		uri, err := url.Parse(site.Proxy)
+		if err != nil {
+			log.Print("server error: " + err.Error())
+			return false
+		}
+		rewrite := site.Rewrite
+		if rewrite.From != "" || rewrite.To != "" {
+			if len(requestURI) >= len(rewrite.From) && requestURI[0:len(rewrite.From)] == rewrite.From {
+				r.URL.Path = rewrite.To + requestURI[len(rewrite.From):]
+			} else {
+				log.Print("the rewrite of [" + site.Host + "," + site.Prefix +
+					"] is error that the from can not match prefix")
+			}
+		}
+		httputil.NewSingleHostReverseProxy(uri).ServeHTTP(w, r)
+		return true
+	}
+	return false
 }

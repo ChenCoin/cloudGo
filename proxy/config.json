@@ -1,20 +1,18 @@
 {
   "initial": false,
-  "port": 443,
+  "port": 80,
   "comment": "if you server is only http, please remove the key-value of crt and key",
-  "crt": "server.crt",
+  "crt": null,
   "key": "server.key",
   "list": [
     {
       "host": "localhost",
+      "prefix": "/api",
       "proxy": "http://localhost:8090",
-      "list": [
-        {
-          "prefix": "",
-          "rewrite": "",
-          "proxy": ""
-        }
-      ]
+      "rewrite": {
+        "from": "/api",
+        "to": ""
+      }
     }
   ]
 }

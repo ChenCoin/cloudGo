@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-type WebdavConfig struct {
+type Config struct {
 	Initial bool   `json:"initial"`
 	Port    int    `json:"port"`
 	Dir     string `json:"dir"`
@@ -17,13 +17,12 @@ type WebdavConfig struct {
 
 var configPath = "./config.json"
 
-func readConfig() (WebdavConfig, error) {
+func readConfig() (Config, error) {
 	data, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		return WebdavConfig{}, err
+	conf := Config{}
+	if err == nil {
+		err = json.Unmarshal(data, &conf)
 	}
-	conf := WebdavConfig{}
-	err = json.Unmarshal(data, &conf)
 	return conf, err
 }
 

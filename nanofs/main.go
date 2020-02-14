@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-type NanofsConfig struct {
+type Config struct {
 	Initial bool   `json:"initial"`
 	Port    int    `json:"port"`
 	Dir     string `json:"dir"`
@@ -18,13 +18,12 @@ var configPath = "./config.json"
 
 var root = "."
 
-func readConfig() (NanofsConfig, error) {
+func readConfig() (Config, error) {
 	data, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		return NanofsConfig{}, err
+	conf := Config{}
+	if err == nil {
+		err = json.Unmarshal(data, &conf)
 	}
-	conf := NanofsConfig{}
-	err = json.Unmarshal(data, &conf)
 	return conf, err
 }
 

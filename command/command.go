@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	. "io/ioutil"
 	"log"
 	"net/http"
 	"os/exec"
@@ -24,12 +24,11 @@ type Config struct {
 var configPath = "./config.json"
 
 func readConfig() (Config, error) {
-	data, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		return Config{}, err
-	}
+	data, err := ReadFile(configPath)
 	conf := Config{}
-	err = json.Unmarshal(data, &conf)
+	if err == nil {
+		err = json.Unmarshal(data, &conf)
+	}
 	return conf, err
 }
 

@@ -18,11 +18,10 @@ var configPath = "./config.json"
 
 func readConfig() (Config, error) {
 	data, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		return Config{}, err
-	}
 	conf := Config{}
-	err = json.Unmarshal(data, &conf)
+	if err == nil {
+		err = json.Unmarshal(data, &conf)
+	}
 	return conf, err
 }
 

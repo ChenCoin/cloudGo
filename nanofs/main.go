@@ -41,7 +41,7 @@ func main() {
 
 	root = conf.Dir
 	handlerFunc("/list/", "/list", list)
-	handlerFile("/download/", "/download", root+"/")
+	handlerFunc("/download/", "/download", download)
 	handlerFunc("/upload/", "/upload", uploadFile)
 	handlerFunc("/copy/", "/copy", copyFiles)
 	handlerFunc("/move/", "/move", move)

@@ -12,7 +12,13 @@
       "rewrite": {
         "from": "/api",
         "to": ""
-      }
+      },
+      "headers": [
+        {
+          "key": "",
+          "value": ""
+        }
+      ]
     }
   ]
 }

@@ -15,11 +15,17 @@ type Rewrite struct {
 	To   string `json:"to"`
 }
 
+type Headers struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
 type Site struct {
-	Host    string  `json:"host"`
-	Prefix  string  `json:"Prefix"`
-	Proxy   string  `json:"proxy"`
-	Rewrite Rewrite `json:"rewrite"`
+	Host    string    `json:"host"`
+	Prefix  string    `json:"Prefix"`
+	Proxy   string    `json:"proxy"`
+	Rewrite Rewrite   `json:"rewrite"`
+	Headers []Headers `json:"headers"`
 }
 
 type Config struct {
@@ -100,6 +106,10 @@ func reverseProxy(site Site, w http.ResponseWriter, r *http.Request) bool {
 					"] is error that the from can not match prefix")
 			}
 		}
+		for _, header := range site.Headers {
+			w.Header().Add(header.Key, header.Value)
+		}
+
 		httputil.NewSingleHostReverseProxy(uri).ServeHTTP(w, r)
 		return true
 	}

@@ -7,11 +7,18 @@
       "result": "{\"now\":\"100\"}"
     }
   ],
-  "dir": ["/ant"],
   "file": [
     {
       "path": "/fs",
-      "result": "/config.json"
+      "result": "./config.json"
     }
-  ]
+  ],
+  "redirect":  [
+    {
+      "path": "/name",
+      "result": "./name.txt"
+    }
+  ],
+  "dir": ["./ant","./better","./c"],
+  "extra": ["./shop/config.json"]
 }
